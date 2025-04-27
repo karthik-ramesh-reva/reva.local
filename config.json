@@ -1,0 +1,175 @@
+{
+  "creds": {
+    "path" : "./creds"
+  },
+  "envars": {
+    "LOGGING_LEVEL_ROOT": "ERROR",
+    "LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB": "ERROR",
+    "LOGGING_LEVEL_AI_REVA": "ERROR",
+    "USER_POOL_ID": "us-east-1_9lP996gFI",
+    "S3_ACCESS_KEY_ID": "test_key",
+    "S3_SECRET_ACCESS_KEY": "test_secret",
+    "S3_REVA_REGION": "us-east-1",
+    "POLICY_STORE_BUCKET": "karthikpolicystorebucket",
+    "ENTITY_BUCKET_NAME": "karthikentitybucket",
+    "IS_LOCAL_S3": false,
+    "IS_REDIS_ENABLED": true,
+    "S3_API_URL": "http://localhost:8040",
+    "PDP_URL": "http://localhost:8088/v1",
+    "DOMAINSERVICE_URL": "http://localhost:8010/v1",
+    "NEO4J_URI": "bolt://localhost:7687",
+    "NEO4J_USER": "neo4j",
+    "NEO4J_PASSWORD": "password",
+    "AMAZON_TITAN_MODEL_ID": "amazon.titan-text-lite-v1",
+    "AWS_REGION": "us-east-1",
+    "REVA_SCHEMA_NAME": "Reva",
+    "REVA_REGION": "us-east-1",
+    "USE_LOCAL_DYNAMODB": true,
+    "CONNECTION_ORCHESTRATOR_URL": "http://localhost:8041",
+    "AVP_URL": "http://localhost:8041",
+    "AWS_URL": "http://localhost:8042",
+    "CEDAR_URL": "http://localhost:8043",
+    "DOMAIN_SERVICE_URL": "http://localhost:8010",
+    "WORKFLOW_SERVICE_URL": "http://localhost:8016",
+    "CEDAR_POLICY_ENGINE_URL": "http://localhost:8070",
+    "AVP_POLICY_ENGINE_URL": "http://localhost:8071",
+    "SETTINGS_URL": "http://localhost:8103",
+    "REGISTRY_URL": "http://localhost:8101",
+    "CONFIG_URL": "http://localhost:8102",
+    "REVA_TENANT": "reva",
+    "REVA_SECRET": "9q04ep_E6BXkOqjxkfsA4jGDaARmXeYZ",
+    "AWS_ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
+    "AWS_SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}",
+    "AWS_SESSION_TOKEN": "{{cred_AWS_SESSION_TOKEN}}"
+  },
+  "servers": [
+    {
+      "name": "redis",
+      "script": {
+        "path": "~",
+        "start": "redis-server --port 6379",
+        "stop": "redis-cli -p 6379 shutdown"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "temporal",
+      "script": {
+        "path": "~",
+        "start": "temporal server start-dev --db-filename ~/Projects/reva/data/temporal/temporal.db",
+        "stop": "kill -9 $(lsof -t -i :8233)"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "dynamodb",
+      "script": {
+        "path": "~/Tools/dynamodb",
+        "start": "java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8005 -dbPath '.' config.db",
+        "stop": "kill -9 $(lsof -t -i :8005)"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "mysql",
+      "script": {
+        "path": "~",
+        "start": "mysql.server start",
+        "stop": "mysql.server stop"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "kakfa-broker",
+      "script": {
+        "path": "~/Tools/kafka",
+        "start": "bin/kafka-storage.sh format --config ./config/kraft/server.properties --cluster-id $(./bin/kafka-storage.sh random-uuid)",
+        "stop": "kill -9 $(lsof -t -i :9092)"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "kakfa-queue",
+      "script": {
+        "path": "~/Tools/kafka",
+        "start": "./bin/kafka-server-start.sh ./config/kraft/server.properties",
+        "stop": "kill -9 $(lsof -t -i :9092)"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "kafka-connector",
+      "script": {
+        "path": "~/Tools/kafka",
+        "start": "./bin/connect-distributed.sh ./config/connect-distributed.properties",
+        "stop": "kill -9 $(lsof -t -i :8083)"
+      },
+      "timeout": 2
+    }
+  ],
+  "services": [
+    {
+      "name": "tenant-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8101,
+        8102,
+        8103
+      ],
+      "script": {
+        "path": "~/Projects/reva/java/tenant-services",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "identity-services",
+      "enable": true,
+      "envars": {
+        "LOGGING_LEVEL_AI_REVA": "DEBUG",
+        "LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB": "DEBUG",
+        "AWS_SESSION_TOKEN": "{{cred_AWS_SESSION_TOKEN}}"
+      },
+      "ports": [
+        8020
+      ],
+      "script": {
+        "path": "~/Projects/reva/java/identity-services",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "ui-monorepo",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8000,
+        8001
+      ],
+      "script": {
+        "path": "~/Projects/reva/node/ui-monorepo",
+        "start": "npm run dev"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "nginx",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        80,
+        443
+      ],
+      "script": {
+        "path": "~/Projects/reva/config/nginx",
+        "start": "sh update.sh"
+      },
+      "timeout": 5
+    }
+  ]
+}
