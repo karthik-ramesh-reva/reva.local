@@ -1,30 +1,34 @@
 {
   "creds": {
-    "path" : "/Users/karthikramesh/Projects/reva/python/reva.local/dist/creds"
+    "path": "/Users/karthikramesh/Projects/reva/python/reva.local/dist/creds"
   },
   "envars": {
-    "LOGGING_LEVEL_ROOT": "ERROR",
-    "LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB": "ERROR",
-    "LOGGING_LEVEL_AI_REVA": "ERROR",
-    "USER_POOL_ID": "us-east-1_9lP996gFI",
-    "S3_ACCESS_KEY_ID": "test_key",
-    "S3_SECRET_ACCESS_KEY": "test_secret",
-    "S3_REVA_REGION": "us-east-1",
-    "POLICY_STORE_BUCKET": "karthikpolicystorebucket",
-    "ENTITY_BUCKET_NAME": "karthikentitybucket",
-    "IS_LOCAL_S3": false,
-    "IS_REDIS_ENABLED": true,
+    "GOPRIVATE": "github.com/reva-ai/shared-library-golang ",
+    "USE_LOCAL_DYNAMODB": "true",
+    "ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
+    "REVA_ACCOUNT_ID": "<<ACCOUNT_ID>>",
+    "REVA_CUSTOMER_ROLE_NAME": "reba-service-access",
+    "REVA_REGION": "us-east-1",
+    "REVA_ROLE_NAME": "reva-customer-access",
+    "SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}",
+    "REGION": "us-east-1",
+    "IS_ROLE_ACCESS": "true",
+    "ROLE_ARN": "arn:aws:iam::<<ACCOUNT_ID>>:role/reva-customer-access",
+    "ROLE_REGION": "us-east-1",
+    "USER_POOL_ID": "<<USER_POOL_ID>>",
+    "CONFLUENT_HOME": "~/projects/confluent",
+    "PATH": "$PATH:$CONFLUENT_HOME/bin",
     "S3_API_URL": "http://localhost:8040",
+    "BUCKET_NAME": "<<BUCKET_NAME>>",
+    "REVA_TENANT": "reva",
+    "S3_ACCESS_KEY_ID": "test_key",
+    "S3_REVA_REGION": "us-east-1",
+    "S3_SECRET_ACCESS_KEY": "test_secret",
+    "IS_LOCAL_S3": "false",
+    "REVA_SCHEMA_NAME": "Reva",
+    "LOCALSTACK_VOLUME_DIR": "~/projects/localstackdata",
     "PDP_URL": "http://localhost:8088/v1",
     "DOMAINSERVICE_URL": "http://localhost:8010/v1",
-    "NEO4J_URI": "bolt://localhost:7687",
-    "NEO4J_USER": "neo4j",
-    "NEO4J_PASSWORD": "password",
-    "AMAZON_TITAN_MODEL_ID": "amazon.titan-text-lite-v1",
-    "AWS_REGION": "us-east-1",
-    "REVA_SCHEMA_NAME": "Reva",
-    "REVA_REGION": "us-east-1",
-    "USE_LOCAL_DYNAMODB": true,
     "CONNECTION_ORCHESTRATOR_URL": "http://localhost:8041",
     "AVP_URL": "http://localhost:8041",
     "AWS_URL": "http://localhost:8042",
@@ -33,23 +37,51 @@
     "WORKFLOW_SERVICE_URL": "http://localhost:8016",
     "CEDAR_POLICY_ENGINE_URL": "http://localhost:8070",
     "AVP_POLICY_ENGINE_URL": "http://localhost:8071",
+    "SETTINGS_SERVICE_URL": "http://localhost:8103",
+    "JAVA_HOME": "$(/usr/libexec/java_home -v 21)",
+    "IS_REDIS_ENABLED": "true",
     "SETTINGS_URL": "http://localhost:8103",
     "REGISTRY_URL": "http://localhost:8101",
-    "CONFIG_URL": "http://localhost:8102",
-    "REVA_TENANT": "reva",
-    "REVA_SECRET": "9q04ep_E6BXkOqjxkfsA4jGDaARmXeYZ",
+    "ACCESS_MAP_SERVICE_URL": "http://localhost:8011",
+    "enablePolling": "false",
+    "JWT_AUDIENCE": "<<AUDIENCE>>",
+    "ENTITY_BUCKET_PATTERN": "<<ENTITY_BUCKET_PATTERN>>",
+    "POLICY_STORE_BUCKET_PATTERN": "<<POLICY_STORE_BUCKET_PATTERN>>",
+    "SCHEMA_BUCKET_PATTERN": "<<SCHEMA_BUCKET_PATTERN>>",
+    "REVA_ENTITY_BUCKET_PATTERN": "<<REVA_ENTITY_BUCKET_PATTERN>>",
+    "REVA_POLICY_STORE_BUCKET_PATTERN": "<<REVA_POLICY_STORE_BUCKET_PATTERN>>",
+    "REVA_SCHEMA_BUCKET_PATTERN": "<<REVA_SCHEMA_BUCKET_PATTERN>>",
+    "GIT_CONNECTOR_REPO_LOCAL_PATH": "/tmp/repository",
+    "GIT_URL": "http://localhost:8044",
+    "DEV_MODE": "true",
+    "SPRING_R2DBC_PASSWORD": "<<MYSQL_PASSWORD>>",
+    "REVA_POLICY_TYPE": "cedar",
+    "REVA_POLICY_VERSION": "3.2",
+    "SPRING_NEO4J_AUTHENTICATION_PASSWORD": "<<NEO4J_PASSWORD>>",
+    "SERVICE_DOMAIN_URL": "http://localhost:8010",
+    "SERVICE_ACCESSMAP_URL": "http://localhost:8011",
+    "SERVICE_NOTIFICATION_URL": "http://localhost:8110",
     "AWS_ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
-    "AWS_SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}",
-    "AWS_SESSION_TOKEN": "{{cred_AWS_SESSION_TOKEN}}"
+    "AWS_SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}"
   },
   "servers": [
     {
-      "name": "redis",
+      "name": "mysql",
       "enable": true,
       "script": {
         "path": "~",
-        "start": "redis-server --port 6379",
-        "stop": "redis-cli -p 6379 shutdown"
+        "start": "mysql.server start",
+        "stop": "mysql.server stop"
+      },
+      "timeout": 2
+    },
+    {
+      "name": "dynamodb",
+      "enable": true,
+      "script": {
+        "path": "<<DYNAMODB_PATH>>",
+        "start": "java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8005 -dbPath '.' config.db",
+        "stop": "kill -9 $(lsof -t -i :8005)"
       },
       "timeout": 2
     },
@@ -64,22 +96,12 @@
       "timeout": 2
     },
     {
-      "name": "dynamodb",
-      "enable": true,
-      "script": {
-        "path": "~/Tools/dynamodb",
-        "start": "java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8005 -dbPath '.' config.db",
-        "stop": "kill -9 $(lsof -t -i :8005)"
-      },
-      "timeout": 2
-    },
-    {
-      "name": "mysql",
+      "name": "redis",
       "enable": true,
       "script": {
         "path": "~",
-        "start": "mysql.server start",
-        "stop": "mysql.server stop"
+        "start": "redis-server --port 6379",
+        "stop": "redis-cli -p 6379 shutdown"
       },
       "timeout": 2
     },
@@ -87,7 +109,7 @@
       "name": "kafka-broker",
       "enable": true,
       "script": {
-        "path": "~/Tools/kafka",
+        "path": "<<KAFKA_PATH>>",
         "start": "bin/kafka-storage.sh format --config ./config/kraft/server.properties --cluster-id $(./bin/kafka-storage.sh random-uuid)",
         "stop": "kill -9 $(lsof -t -i :9092)"
       },
@@ -97,7 +119,7 @@
       "name": "kafka-queue",
       "enable": true,
       "script": {
-        "path": "~/Tools/kafka",
+        "path": "<<KAFKA_PATH>>",
         "start": "./bin/kafka-server-start.sh ./config/kraft/server.properties",
         "stop": "kill -9 $(lsof -t -i :9092)"
       },
@@ -107,7 +129,7 @@
       "name": "kafka-connector",
       "enable": true,
       "script": {
-        "path": "~/Tools/kafka",
+        "path": "<<KAFKA_PATH>>",
         "start": "./bin/connect-distributed.sh ./config/connect-distributed.properties",
         "stop": "kill -9 $(lsof -t -i :8083)"
       },
@@ -126,24 +148,212 @@
         8103
       ],
       "script": {
-        "path": "~/Projects/reva/java/tenant-services",
+        "path": "<<TENANT_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 10
     },
     {
       "name": "identity-services",
       "enable": true,
       "envars": {
-        "LOGGING_LEVEL_AI_REVA": "DEBUG",
-        "LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB": "DEBUG",
-        "AWS_SESSION_TOKEN": "{{cred_AWS_SESSION_TOKEN}}"
       },
       "ports": [
         8020
       ],
       "script": {
-        "path": "~/Projects/reva/java/identity-services",
+        "path": "<<IDENTITY_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "reva-pdp",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8088
+      ],
+      "script": {
+        "path": "<<REVA_PDP_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "reva-pep",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8087
+      ],
+      "script": {
+        "path": "<<REVA_PEP_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "connector-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8040,
+        8041,
+        8042,
+        8043,
+        8044
+      ],
+      "script": {
+        "path": "<<CONNECTOR_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "policy-engine",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8070,
+        8071
+      ],
+      "script": {
+        "path": "<<POLICY_ENGINE_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "intelligence-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        9000
+      ],
+      "script": {
+        "path": "<<INTELLIGENCE_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "management-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8105
+      ],
+      "script": {
+        "path": "<<MANAGEMENT_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "reva-rule-engine",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8057
+      ],
+      "script": {
+        "path": "<<REVA_RULE_ENGINE_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "data-ingestion-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        7501,
+        7502
+      ],
+      "script": {
+        "path": "<<DATA_INGESTION_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "listener-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8102
+      ],
+      "script": {
+        "path": "<<LISTENER_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "event-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8010,
+        8011
+      ],
+      "script": {
+        "path": "<<EVENT_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "core-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8010,
+        8011
+      ],
+      "script": {
+        "path": "<<CORE_SERVICES_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "reva-pip",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8012
+      ],
+      "script": {
+        "path": "<<REVA_PIP_PATH>>",
+        "start": "sh run.sh"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "orchestration-services",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        8015,
+        8016
+      ],
+      "script": {
+        "path": "<<ORCHESTRATION_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
       "timeout": 5
@@ -158,8 +368,24 @@
         8001
       ],
       "script": {
-        "path": "~/Projects/reva/node/ui-monorepo",
+        "path": "<<UI_MONOREPO_PATH>>",
         "start": "npm run dev"
+      },
+      "timeout": 5
+    },
+    {
+      "name": "gateway",
+      "enable": true,
+      "envars": {
+      },
+      "ports": [
+        7997,
+        7998,
+        7999
+      ],
+      "script": {
+        "path": "<<GATEWAY_PATH>>",
+        "start": "sh run.sh"
       },
       "timeout": 5
     },
@@ -173,7 +399,7 @@
         443
       ],
       "script": {
-        "path": "~/Projects/reva/config/nginx",
+        "path": "<<NGINX_PATH>>",
         "start": "sh update.sh"
       },
       "timeout": 5
@@ -181,7 +407,7 @@
   ],
   "access": {
     "enable": true,
-    "timeout": 1,
+    "timeout": 5,
     "url": "https://reva.local"
   }
 }
