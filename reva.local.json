@@ -311,8 +311,7 @@
       "envars": {
       },
       "ports": [
-        8010,
-        8011
+        8110
       ],
       "script": {
         "path": "<<EVENT_SERVICES_PATH>>",
