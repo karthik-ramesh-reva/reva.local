@@ -1,6 +1,6 @@
 {
   "creds": {
-    "path": "/Users/karthikramesh/Projects/reva/python/reva.local/dist/creds"
+    "path": "<<CREDS_PATH>>"
   },
   "envars": {
     "GOPRIVATE": "github.com/reva-ai/shared-library-golang",
