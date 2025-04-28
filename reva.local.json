@@ -399,8 +399,6 @@
       "envars": {
       },
       "ports": [
-        80,
-        443
       ],
       "script": {
         "path": "<<NGINX_PATH>>",
