@@ -19,7 +19,6 @@
     "CONFLUENT_HOME": "~/projects/confluent",
     "PATH": "$PATH:$CONFLUENT_HOME/bin",
     "S3_API_URL": "http://localhost:8040",
-    "BUCKET_NAME": "<<BUCKET_NAME>>",
     "REVA_TENANT": "reva",
     "S3_ACCESS_KEY_ID": "test_key",
     "S3_REVA_REGION": "us-east-1",
