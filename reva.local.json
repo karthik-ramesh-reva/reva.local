@@ -61,6 +61,11 @@
     "SERVICE_DOMAIN_URL": "http://localhost:8010",
     "SERVICE_ACCESSMAP_URL": "http://localhost:8011",
     "SERVICE_NOTIFICATION_URL": "http://localhost:8110",
+    "COGNITO_IDENTITY_POOL_ID": "<<IDENTITY_POOL_ID>>",
+    "COGNITO_CLIENT_ID": "<<COGNITO_CLIENT_ID>>",
+    "COGNITO_UESRPOOL_ID": "<<USER_POOL_ID>>",
+    "COGNITO_DOMAIN_URL": "<<COGNITO_DOMAIN_URL>>",
+    "COGNITO_REGION": "us-east-1",
     "AWS_ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
     "AWS_SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}",
     "AWS_SESSION_TOKEN": "{{cred_AWS_SESSION_TOKEN}}"
@@ -166,7 +171,7 @@
         "path": "<<IDENTITY_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 2
     },
     {
       "name": "reva-pdp",
@@ -180,7 +185,7 @@
         "path": "<<REVA_PDP_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "reva-pep",
@@ -194,7 +199,7 @@
         "path": "<<REVA_PEP_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "connector-services",
@@ -212,7 +217,7 @@
         "path": "<<CONNECTOR_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "policy-engine",
@@ -227,7 +232,7 @@
         "path": "<<POLICY_ENGINE_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "intelligence-services",
@@ -241,7 +246,7 @@
         "path": "<<INTELLIGENCE_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "management-services",
@@ -255,7 +260,7 @@
         "path": "<<MANAGEMENT_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "reva-rule-engine",
@@ -269,7 +274,7 @@
         "path": "<<REVA_RULE_ENGINE_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "data-ingestion-services",
@@ -284,7 +289,7 @@
         "path": "<<DATA_INGESTION_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "listener-services",
@@ -298,7 +303,7 @@
         "path": "<<LISTENER_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 1
     },
     {
       "name": "event-services",
@@ -313,7 +318,7 @@
         "path": "<<EVENT_SERVICES_PATH>>",
         "start": "sh run.sh"
       },
-      "timeout": 5
+      "timeout": 2
     },
     {
       "name": "core-services",
@@ -372,7 +377,7 @@
         "path": "<<UI_MONOREPO_PATH>>",
         "start": "npm run dev"
       },
-      "timeout": 5
+      "timeout": 10
     },
     {
       "name": "gateway",
@@ -408,7 +413,7 @@
   ],
   "access": {
     "enable": true,
-    "timeout": 5,
+    "timeout": 10,
     "url": "https://reva.local"
   }
 }
