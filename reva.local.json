@@ -62,7 +62,8 @@
     "SERVICE_ACCESSMAP_URL": "http://localhost:8011",
     "SERVICE_NOTIFICATION_URL": "http://localhost:8110",
     "AWS_ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
-    "AWS_SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}"
+    "AWS_SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}",
+    "AWS_SESSION_TOKEN": "{{cred_AWS_SESSION_TOKEN}}"
   },
   "servers": [
     {
