@@ -1,6 +1,6 @@
 {
   "creds": {
-    "path" : "./creds"
+    "path" : "/Users/karthikramesh/Projects/reva/python/reva.local/dist/creds"
   },
   "envars": {
     "LOGGING_LEVEL_ROOT": "ERROR",
@@ -45,6 +45,7 @@
   "servers": [
     {
       "name": "redis",
+      "enable": true,
       "script": {
         "path": "~",
         "start": "redis-server --port 6379",
@@ -54,6 +55,7 @@
     },
     {
       "name": "temporal",
+      "enable": true,
       "script": {
         "path": "~",
         "start": "temporal server start-dev --db-filename ~/Projects/reva/data/temporal/temporal.db",
@@ -63,6 +65,7 @@
     },
     {
       "name": "dynamodb",
+      "enable": true,
       "script": {
         "path": "~/Tools/dynamodb",
         "start": "java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8005 -dbPath '.' config.db",
@@ -72,6 +75,7 @@
     },
     {
       "name": "mysql",
+      "enable": true,
       "script": {
         "path": "~",
         "start": "mysql.server start",
@@ -80,7 +84,8 @@
       "timeout": 2
     },
     {
-      "name": "kakfa-broker",
+      "name": "kafka-broker",
+      "enable": true,
       "script": {
         "path": "~/Tools/kafka",
         "start": "bin/kafka-storage.sh format --config ./config/kraft/server.properties --cluster-id $(./bin/kafka-storage.sh random-uuid)",
@@ -89,7 +94,8 @@
       "timeout": 2
     },
     {
-      "name": "kakfa-queue",
+      "name": "kafka-queue",
+      "enable": true,
       "script": {
         "path": "~/Tools/kafka",
         "start": "./bin/kafka-server-start.sh ./config/kraft/server.properties",
@@ -99,6 +105,7 @@
     },
     {
       "name": "kafka-connector",
+      "enable": true,
       "script": {
         "path": "~/Tools/kafka",
         "start": "./bin/connect-distributed.sh ./config/connect-distributed.properties",
@@ -171,5 +178,10 @@
       },
       "timeout": 5
     }
-  ]
+  ],
+  "access": {
+    "enable": true,
+    "timeout": 1,
+    "url": "https://reva.local"
+  }
 }

@@ -9,7 +9,7 @@ import tempfile
 # ──────────────────────────────────────────────────────────────────────────────
 # Dynamically generates the full start.sh into /tmp and runs it.
 # Accepts two optional args:
-#   1) path to config file (default ./config.json)
+#   1) path to config file (default ./reva.local.json)
 #   2) branch name       (default main)
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -21,8 +21,8 @@ set -euo pipefail
 #
 # Usage:
 #   chmod +x start.sh
-#   ./start.sh             # uses ./config.json, branch=main
-#   ./start.sh path/to/config.json dev
+#   ./start.sh             # uses ./reva.local.json, branch=main
+#   ./start.sh path/to/reva.local.json dev
 #
 # Features:
 #   0) Load KEY=VALUE lines from ./creds and export them.
@@ -42,7 +42,7 @@ set -euo pipefail
 # ──────────────────────────────────────────────────────────────────────────────
 
 # ── Parameters ─────────────────────────────────────────────────────────────────
-CONFIG_FILE="${1:-config.json}"
+CONFIG_FILE="${1:-reva.local.json}"
 BRANCH="${2:-main}"
 
 # ── Preconditions ───────────────────────────────────────────────────────────────
@@ -53,6 +53,19 @@ command -v jq >/dev/null 2>&1 || {
 
 # ── VALIDATOR ───────────────────────────────────────────────────────────────────
 validate_config() {
+  # 0) Make sure the config file actually exists
+  if [[ ! -f "$CONFIG_FILE" ]]; then
+    # compute absolute path for clarity
+    if command -v realpath >/dev/null 2>&1; then
+      full_path=$(realpath "$CONFIG_FILE")
+    else
+      # fallback if realpath isn’t installed
+      full_path="$(cd "$(dirname "$CONFIG_FILE")" && pwd)/$(basename "$CONFIG_FILE")"
+    fi
+    echo "❌ Config file not found: $full_path" >&2
+    exit 1
+  fi
+
   # 1) Verify overall JSON syntax
   if ! jq empty "$CONFIG_FILE" 2>/dev/null; then
     echo "❌ Invalid JSON in '$CONFIG_FILE'." >&2
@@ -123,7 +136,10 @@ validate_config() {
 validate_config
 
 # ── 0) Load credentials from creds file ─────────────────────────────────────────
-CREDS_EXE="./creds"
+CREDS_PATH=$(jq -r '.creds.path' "$CONFIG_FILE")
+# inline tilde→$HOME expansion:
+CREDS_EXE="${CREDS_PATH/#\~/$HOME}"
+
 if [[ -x "$CREDS_EXE" ]]; then
   raw_creds=$("$CREDS_EXE")
 elif [[ -f "$CREDS_EXE" ]]; then
@@ -206,7 +222,7 @@ EOF
 
 # ── 1) Kill any lingering service ports ─────────────────────────────────────────
 echo "🛑 Killing service ports…"
-for port in $(jq -r '.services[].ports[]' "$CONFIG_FILE"); do
+for port in $(jq -r '.services[] | select(.enable==true) | .ports[]' "$CONFIG_FILE"); do
   echo "  • port $port"
   if pids=$(lsof -ti tcp:"$port"); then
     printf '%s\n' "$pids" | xargs -r kill -9
@@ -215,7 +231,7 @@ done
 
 # ── 2) Stop all servers ────────────────────────────────────────────────────────
 echo "🛑 Stopping servers…"
-for name in $(jq -r '.servers[].name' "$CONFIG_FILE"); do
+for name in $(jq -r '.servers[] | select(.enable==true) | .name' "$CONFIG_FILE"); do
   info=".servers[] | select(.name==\"$name\")"
   path="$(_expand "$(jq -r "$info.script.path" "$CONFIG_FILE")")"
   stop_cmd=$(jq -r "$info.script.stop" "$CONFIG_FILE")
@@ -225,7 +241,7 @@ done
 
 # ── 3) Start servers in new tabs ────────────────────────────────────────────────
 echo "🚀 Starting servers…"
-for name in $(jq -r '.servers[].name' "$CONFIG_FILE"); do
+for name in $(jq -r '.servers[] | select(.enable==true) | .name' "$CONFIG_FILE"); do
   info=".servers[] | select(.name==\"$name\")"
   path="$(_expand "$(jq -r "$info.script.path" "$CONFIG_FILE")")"
   start_cmd=$(jq -r "$info.script.start" "$CONFIG_FILE")
@@ -306,14 +322,25 @@ done
 
 echo "✅ All tabs launched successfully!"
 
+# ── 5) If access is enabled, wait then open URL ───────────────────────────────
+if jq -e '.access.enable==true' "$CONFIG_FILE" >/dev/null; then
+  access_timeout=$(jq -r '.access.timeout' "$CONFIG_FILE")
+  access_url=$(jq -r '.access.url'     "$CONFIG_FILE")
+
+  echo "🌐 Waiting ${access_timeout}s before opening access URL…"
+  sleep "$access_timeout"
+
+  echo "🌐 Opening ${access_url} in your default browser"
+  open "$access_url"
+fi
 '''
 
 def main():
     parser = argparse.ArgumentParser(
         description="Generate and run the Reva start.sh from a temp file"
     )
-    parser.add_argument("config_file", nargs="?", default="config.json",
-                        help="path to your config.json")
+    parser.add_argument("config_file", nargs="?", default="reva.local.json",
+                        help="path to your reva.local.json")
     parser.add_argument("branch", nargs="?", default="main",
                         help="git branch to checkout for services")
     args = parser.parse_args()
