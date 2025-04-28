@@ -36,7 +36,6 @@
     "CEDAR_POLICY_ENGINE_URL": "http://localhost:8070",
     "AVP_POLICY_ENGINE_URL": "http://localhost:8071",
     "SETTINGS_SERVICE_URL": "http://localhost:8103",
-    "JAVA_HOME": "$(/usr/libexec/java_home -v 21)",
     "IS_REDIS_ENABLED": "true",
     "SETTINGS_URL": "http://localhost:8103",
     "REGISTRY_URL": "http://localhost:8101",
@@ -61,7 +60,7 @@
     "SERVICE_NOTIFICATION_URL": "http://localhost:8110",
     "COGNITO_IDENTITY_POOL_ID": "<<IDENTITY_POOL_ID>>",
     "COGNITO_CLIENT_ID": "<<COGNITO_CLIENT_ID>>",
-    "COGNITO_UESRPOOL_ID": "<<USER_POOL_ID>>",
+    "COGNITO_USERPOOL_ID": "<<USER_POOL_ID>>",
     "COGNITO_DOMAIN_URL": "<<COGNITO_DOMAIN_URL>>",
     "COGNITO_REGION": "us-east-1",
     "AWS_ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
@@ -372,7 +371,7 @@
       ],
       "script": {
         "path": "<<UI_MONOREPO_PATH>>",
-        "start": "npm run dev"
+        "start": "npm install && npm run dev"
       },
       "timeout": 10
     },
@@ -401,7 +400,7 @@
       ],
       "script": {
         "path": "<<NGINX_PATH>>",
-        "start": "sh update.sh"
+        "start": "nginx & sh update.sh"
       },
       "timeout": 5
     }
