@@ -27,7 +27,7 @@
     "LOCALSTACK_VOLUME_DIR": "~/projects/localstackdata",
     "PDP_URL": "http://localhost:8088/v1",
     "DOMAINSERVICE_URL": "http://localhost:8010/v1",
-    "CONNECTION_ORCHESTRATOR_URL": "http://localhost:8041",
+    "CONNECTION_ORCHESTRATOR_URL": "http://localhost:8040",
     "AVP_URL": "http://localhost:8041",
     "AWS_URL": "http://localhost:8042",
     "CEDAR_URL": "http://localhost:8043",
