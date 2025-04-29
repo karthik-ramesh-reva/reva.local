@@ -371,7 +371,7 @@
       ],
       "script": {
         "path": "<<UI_MONOREPO_PATH>>",
-        "start": "npm install && npm run dev"
+        "start": "npm install && npm run build && cd apps/web && npm run start"
       },
       "timeout": 10
     },
