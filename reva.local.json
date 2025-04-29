@@ -7,7 +7,7 @@
     "USE_LOCAL_DYNAMODB": "true",
     "ACCESS_KEY_ID": "{{cred_AWS_ACCESS_KEY_ID}}",
     "REVA_ACCOUNT_ID": "<<ACCOUNT_ID>>",
-    "REVA_CUSTOMER_ROLE_NAME": "reba-service-access",
+    "REVA_CUSTOMER_ROLE_NAME": "reva-service-access",
     "REVA_REGION": "us-east-1",
     "REVA_ROLE_NAME": "reva-customer-access",
     "SECRET_ACCESS_KEY": "{{cred_AWS_SECRET_ACCESS_KEY}}",
