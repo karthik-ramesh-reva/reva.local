@@ -138,10 +138,14 @@ fi
 declare -A creds_map
 
 # Populate the map with KEY=VALUE pairs
-while IFS=':' read -r key val; do
+while IFS=':=:=:' read -r key val; do
   [[ -z "$key" ]] && continue
+  # Remove leading/trailing whitespace
+  key=$(echo "$key" | xargs)
+  val=$(echo "$val" | xargs)
+  # Trim the prefix "=:=:" if it exists
+  [[ "$val" == =:=:* ]] && val="${val#=:=:}"
   creds_map["$key"]="$val"
-
 done <<< "$raw_creds"
 
 # ── Helper to expand {{cred_FOO}} via creds_map ───────────────────────────

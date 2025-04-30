@@ -9,7 +9,7 @@ def extract_creds():
 
 def print_creds():
     for k,v in creds.items():
-        print(f"{k}:{v}")
+        print(f"{k}:=:=:{v}")
 
 extract_creds()
 print_creds()
