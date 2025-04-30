@@ -138,7 +138,7 @@ fi
 declare -A creds_map
 
 # Populate the map with KEY=VALUE pairs
-while IFS='=' read -r key val; do
+while IFS=':' read -r key val; do
   [[ -z "$key" ]] && continue
   creds_map["$key"]="$val"
 
@@ -155,6 +155,12 @@ expand_val() {
   fi
 }
 
+# ── Helper to clean values ───────────────────────────
+clean_value() {
+    local value="$1"
+    echo "${value//$'\r'/}" | sed 's/^\$//'
+}
+
 # ── Helper to generate envars ───────────────────────────
 generate_envars_for() {
   local jq_path="$1"; shift
@@ -163,6 +169,9 @@ generate_envars_for() {
 
   while IFS=$'\t' read -r key raw; do
     val=$(expand_val "$raw")
+
+    # clean up the value
+    val=$(clean_value "$val")
 
     # check if key is in skip[]
     local comment=

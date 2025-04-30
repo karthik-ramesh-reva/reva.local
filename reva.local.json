@@ -24,7 +24,6 @@
     "S3_SECRET_ACCESS_KEY": "test_secret",
     "IS_LOCAL_S3": "false",
     "REVA_SCHEMA_NAME": "Reva",
-    "LOCALSTACK_VOLUME_DIR": "~/projects/localstackdata",
     "PDP_URL": "http://localhost:8088/v1",
     "DOMAINSERVICE_URL": "http://localhost:8010/v1",
     "CONNECTION_ORCHESTRATOR_URL": "http://localhost:8040",
