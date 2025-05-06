@@ -280,12 +280,19 @@ EOF
 done
 
 # ── 4) Start services in new tabs ───────────────────────────────────────────────
-echo "🚀 Starting services on branch '$DEFAULT_BRANCH'…"
+echo "🚀 Starting services custom branch  or '$DEFAULT_BRANCH' branch if custom branch is not set…"
 for name in $(jq -r '.services[] | select(.enable==true) | .name' "$CONFIG_FILE"); do
   info=".services[] | select(.name==\"$name\")"
   path="$(_expand "$(jq -r "$info.script.path" "$CONFIG_FILE")")"
   start_cmd=$(jq -r "$info.script.start" "$CONFIG_FILE")
   timeout_sec=$(jq -r "$info.timeout" "$CONFIG_FILE")
+  branch=$(jq -r ".services[] | select(.name==\"$name\") | .branch" "$CONFIG_FILE")
+  echo "Branch name for $name: $branch"
+
+  # If branch is not set, use the default branch
+  if [[ "$branch" == "null" ]]; then
+    branch="$DEFAULT_BRANCH"
+  fi
 
   # gather the service's own envar keys into an array
   readarray -t service_keys < <(
@@ -313,7 +320,7 @@ $(generate_envars_for "$info.envars")
 cd "$path"
 if [[ "$PULL_LATEST" == "true" ]]; then
   git reset --hard
-  git checkout "$DEFAULT_BRANCH"
+  git checkout "$branch"
   git pull
 fi
 
