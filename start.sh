@@ -27,8 +27,17 @@ set -euo pipefail
 # ──────────────────────────────────────────────────────────────────────────────
 
 # ── Parameters ─────────────────────────────────────────────────────────────────
-CONFIG_FILE="${1:-reva.local.json}"
-BRANCH="${2:-main}"
+CONFIG_FILE="reva.local.json"
+DEFAULT_BRANCH="main"
+PULL_LATEST="false"
+
+for param in "$@"; do
+  if [[ "$param" == *.json ]]; then
+    CONFIG_FILE="$param"
+  elif [[ "$param" == "--pull-latest" ]]; then
+    PULL_LATEST="true"
+  fi
+done
 
 # ── Preconditions ───────────────────────────────────────────────────────────────
 command -v jq >/dev/null 2>&1 || {
@@ -271,7 +280,7 @@ EOF
 done
 
 # ── 4) Start services in new tabs ───────────────────────────────────────────────
-echo "🚀 Starting services on branch '$BRANCH'…"
+echo "🚀 Starting services on branch '$DEFAULT_BRANCH'…"
 for name in $(jq -r '.services[] | select(.enable==true) | .name' "$CONFIG_FILE"); do
   info=".services[] | select(.name==\"$name\")"
   path="$(_expand "$(jq -r "$info.script.path" "$CONFIG_FILE")")"
@@ -302,9 +311,11 @@ $(generate_envars_for "$info.envars")
 
 # Git reset, checkout, pull
 cd "$path"
-git reset --hard
-git checkout "$BRANCH"
-git pull
+if [[ "$PULL_LATEST" == "true" ]]; then
+  git reset --hard
+  git checkout "$DEFAULT_BRANCH"
+  git pull
+fi
 
 # Start service
 $start_cmd
