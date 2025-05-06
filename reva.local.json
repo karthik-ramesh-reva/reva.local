@@ -145,6 +145,7 @@
     {
       "name": "tenant-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -161,6 +162,7 @@
     {
       "name": "identity-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -175,6 +177,7 @@
     {
       "name": "reva-pdp",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -189,6 +192,7 @@
     {
       "name": "reva-pep",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -203,6 +207,7 @@
     {
       "name": "connector-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -221,6 +226,7 @@
     {
       "name": "policy-engine",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -236,6 +242,7 @@
     {
       "name": "intelligence-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -250,6 +257,7 @@
     {
       "name": "management-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -264,6 +272,7 @@
     {
       "name": "reva-rule-engine",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -278,6 +287,7 @@
     {
       "name": "data-ingestion-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -293,6 +303,7 @@
     {
       "name": "listener-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -307,6 +318,7 @@
     {
       "name": "event-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -321,6 +333,7 @@
     {
       "name": "core-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -336,6 +349,7 @@
     {
       "name": "reva-pip",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -350,6 +364,7 @@
     {
       "name": "orchestration-services",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -365,6 +380,7 @@
     {
       "name": "ui-monorepo",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -380,6 +396,7 @@
     {
       "name": "gateway",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
@@ -396,6 +413,7 @@
     {
       "name": "nginx",
       "enable": true,
+      "branch": "main",
       "envars": {
       },
       "ports": [
