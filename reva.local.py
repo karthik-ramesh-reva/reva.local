@@ -374,6 +374,8 @@ def main():
                         help="path to your reva.local.json")
     parser.add_argument("branch", nargs="?", default="main",
                         help="git branch to checkout for services")
+    parser.add_argument("--pull-latest", action="store_true",
+                        help="pull the latest changes from the repository")
     args = parser.parse_args()
 
     # Prepare a unique temp‐path
@@ -395,7 +397,7 @@ def main():
 
     # Now invoke it with the two args
     try:
-        subprocess.run([script_path, args.config_file, args.branch], check=True)
+        subprocess.run([script_path, args.config_file, args.branch]+ (["--pull-latest"] if args.pull_latest else []), check=True)
     except subprocess.CalledProcessError as e:
         print(f"❌ start.sh failed with exit code {e.returncode}", file=sys.stderr)
         sys.exit(e.returncode)
